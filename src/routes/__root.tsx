@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Leve Mais Brasil — Mais produtos, mais economia" },
+      { title: "Leve Mais Brasil | Mais produtos, mais economia" },
       {
         name: "description",
         content:
           "Loja online com gadgets, fitness, casa, pet e mais. Frete para todo o Brasil, Pix com desconto e parcelamento no cartão.",
       },
-      { property: "og:title", content: "Leve Mais Brasil" },
+      { property: "og:title", content: "Leve Mais Brasil | Mais produtos, mais economia" },
       {
         property: "og:description",
         content: "Mais produtos, mais conveniência, mais economia. Mais para você.",
@@ -91,6 +91,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#1f9d49" },
+      { name: "twitter:title", content: "Leve Mais Brasil | Mais produtos, mais economia" },
+      { name: "description", content: "A Leve Mais Brasil reúne uma grande variedade de produtos com preços acessíveis, proporcionando praticidade, segurança e economia para suas compras online." },
+      { property: "og:description", content: "A Leve Mais Brasil reúne uma grande variedade de produtos com preços acessíveis, proporcionando praticidade, segurança e economia para suas compras online." },
+      { name: "twitter:description", content: "A Leve Mais Brasil reúne uma grande variedade de produtos com preços acessíveis, proporcionando praticidade, segurança e economia para suas compras online." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/YUQe8fAaj6Nh37HO8MggsD27wY33/social-images/social-1781183755820-ChatGPT_Image_9_de_jun._de_2026,_15_53_29.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/YUQe8fAaj6Nh37HO8MggsD27wY33/social-images/social-1781183755820-ChatGPT_Image_9_de_jun._de_2026,_15_53_29.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
