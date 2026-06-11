@@ -18,6 +18,8 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const search = useSearch({ from: "/auth" });
+  const redirectTo = (search as any).redirect || "/conta";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
