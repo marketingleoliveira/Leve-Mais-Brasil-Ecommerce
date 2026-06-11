@@ -112,7 +112,7 @@ function CatalogInner({ q, setQ, search, navigate }: {
           </h3>
           <div className="flex flex-wrap lg:flex-col gap-2">
             <button
-              onClick={() => navigate({ search: { ...search, cat: undefined } })}
+              onClick={() => navigate({ search: () => ({ ...search, cat: undefined }) })}
               className={`text-left text-sm px-3 py-2 rounded-lg transition ${!search.cat ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-secondary"}`}
             >
               Todas
@@ -120,13 +120,14 @@ function CatalogInner({ q, setQ, search, navigate }: {
             {cats.map((c) => (
               <button
                 key={c.id}
-                onClick={() => navigate({ search: { ...search, cat: c.slug } })}
+                onClick={() => navigate({ search: () => ({ ...search, cat: c.slug }) })}
                 className={`text-left text-sm px-3 py-2 rounded-lg transition ${search.cat === c.slug ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-secondary"}`}
               >
                 {c.name}
               </button>
             ))}
           </div>
+
         </div>
       </aside>
 
