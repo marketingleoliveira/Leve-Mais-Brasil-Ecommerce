@@ -49,12 +49,13 @@ export const Route = createFileRoute("/produtos")({
     ]),
   errorComponent: () => <SiteLayout><div className="p-10 text-center">Erro ao carregar produtos.</div></SiteLayout>,
   notFoundComponent: () => <SiteLayout><div className="p-10 text-center">Categoria não encontrada.</div></SiteLayout>,
-  head: ({ match }) => ({
+  head: () => ({
     meta: [
-      { title: `Produtos${match.search.cat ? ` — ${match.search.cat}` : ""} | Leve Mais Brasil` },
+      { title: "Produtos | Leve Mais Brasil" },
       { name: "description", content: "Catálogo completo de produtos com frete para todo o Brasil." },
     ],
   }),
+
   component: Catalog,
 });
 
