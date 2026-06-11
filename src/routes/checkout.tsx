@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { useAuth } from "@/hooks/use-auth";
@@ -166,10 +166,11 @@ function Checkout() {
                 <PayOption label="Cartão de crédito" desc="em até 12x sem juros" selected={method === "credit_card"} onClick={() => setMethod("credit_card")} />
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                💳 Em breve: integração completa com Mercado Pago. Por enquanto, o pedido fica registrado e nossa equipe entra em contato para confirmação.
+                🔒 Pagamento processado com segurança pela <strong>InfinityPay</strong>. Pix com aprovação imediata e cartão em até 12x.
               </p>
             </section>
           </div>
+
 
           <aside className="bg-card border border-border rounded-2xl p-6 h-fit lg:sticky lg:top-24">
             <h2 className="font-bold mb-4">Resumo</h2>
