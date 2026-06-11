@@ -42,7 +42,7 @@ function PedidoConfirmado() {
         const { data, error } = await supabase
           .from("orders")
           .update({
-            payment_status: "paid",
+            payment_status: "approved",
             status: "processing",
             payment_id: search.transaction_nsu ?? null,
             notes: search.receipt_url ? `Recibo InfinityPay: ${search.receipt_url}` : null,
