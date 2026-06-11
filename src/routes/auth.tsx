@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,8 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const search = useSearch({ from: "/auth" });
+  const redirectTo = (search as any).redirect || "/conta";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,7 +40,7 @@ function AuthPage() {
         });
         if (error) throw error;
       }
-      navigate({ to: "/conta" });
+      navigate({ to: redirectTo });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro ao autenticar";
       if (msg.includes("Invalid login")) setError("Email ou senha incorretos.");
