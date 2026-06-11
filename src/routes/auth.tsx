@@ -40,7 +40,7 @@ function AuthPage() {
         });
         if (error) throw error;
       }
-      navigate({ to: "/conta" });
+      navigate({ to: redirectTo });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro ao autenticar";
       if (msg.includes("Invalid login")) setError("Email ou senha incorretos.");
