@@ -60,7 +60,7 @@ export const Route = createFileRoute("/produtos")({
 
 function Catalog() {
   const search = Route.useSearch();
-  const navigate = useNavigate({ from: Route.fullPath });
+  const navigate = useNavigate();
   const [q, setQ] = useState(search.q ?? "");
 
   return (
