@@ -145,7 +145,7 @@ function CatalogInner({ q, setQ, search, navigate }: {
           </div>
           <select
             value={search.sort ?? "recent"}
-            onChange={(e) => navigate({ search: { ...search, sort: e.target.value as never } })}
+            onChange={(e) => navigate({ to: "/produtos", search: { ...search, sort: e.target.value as never } })}
             className="h-11 px-4 rounded-full border border-input bg-card text-sm"
           >
             <option value="recent">Mais recentes</option>
