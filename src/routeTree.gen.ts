@@ -13,8 +13,13 @@ import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
+import { Route as AuthenticatedContaRouteImport } from './routes/_authenticated/conta'
+import { Route as AuthenticatedContaIndexRouteImport } from './routes/_authenticated/conta.index'
+import { Route as AuthenticatedContaPedidosRouteImport } from './routes/_authenticated/conta.pedidos'
+import { Route as AuthenticatedContaEnderecosRouteImport } from './routes/_authenticated/conta.enderecos'
 
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
@@ -36,6 +41,10 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -46,6 +55,28 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
   path: '/produto/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedContaRoute = AuthenticatedContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContaIndexRoute = AuthenticatedContaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedContaRoute,
+} as any)
+const AuthenticatedContaPedidosRoute =
+  AuthenticatedContaPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedContaRoute,
+  } as any)
+const AuthenticatedContaEnderecosRoute =
+  AuthenticatedContaEnderecosRouteImport.update({
+    id: '/enderecos',
+    path: '/enderecos',
+    getParentRoute: () => AuthenticatedContaRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,7 +84,11 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/produtos': typeof ProdutosRoute
+  '/conta': typeof AuthenticatedContaRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/conta/enderecos': typeof AuthenticatedContaEnderecosRoute
+  '/conta/pedidos': typeof AuthenticatedContaPedidosRoute
+  '/conta/': typeof AuthenticatedContaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,15 +97,23 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/produtos': typeof ProdutosRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/conta/enderecos': typeof AuthenticatedContaEnderecosRoute
+  '/conta/pedidos': typeof AuthenticatedContaPedidosRoute
+  '/conta': typeof AuthenticatedContaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/produtos': typeof ProdutosRoute
+  '/_authenticated/conta': typeof AuthenticatedContaRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/_authenticated/conta/enderecos': typeof AuthenticatedContaEnderecosRoute
+  '/_authenticated/conta/pedidos': typeof AuthenticatedContaPedidosRoute
+  '/_authenticated/conta/': typeof AuthenticatedContaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,21 +123,40 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/produtos'
+    | '/conta'
     | '/produto/$slug'
+    | '/conta/enderecos'
+    | '/conta/pedidos'
+    | '/conta/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/carrinho' | '/checkout' | '/produtos' | '/produto/$slug'
-  id:
-    | '__root__'
+  to:
     | '/'
     | '/auth'
     | '/carrinho'
     | '/checkout'
     | '/produtos'
     | '/produto/$slug'
+    | '/conta/enderecos'
+    | '/conta/pedidos'
+    | '/conta'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/carrinho'
+    | '/checkout'
+    | '/produtos'
+    | '/_authenticated/conta'
+    | '/produto/$slug'
+    | '/_authenticated/conta/enderecos'
+    | '/_authenticated/conta/pedidos'
+    | '/_authenticated/conta/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   CheckoutRoute: typeof CheckoutRoute
@@ -132,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -146,11 +215,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutoSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/conta': {
+      id: '/_authenticated/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof AuthenticatedContaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conta/': {
+      id: '/_authenticated/conta/'
+      path: '/'
+      fullPath: '/conta/'
+      preLoaderRoute: typeof AuthenticatedContaIndexRouteImport
+      parentRoute: typeof AuthenticatedContaRoute
+    }
+    '/_authenticated/conta/pedidos': {
+      id: '/_authenticated/conta/pedidos'
+      path: '/pedidos'
+      fullPath: '/conta/pedidos'
+      preLoaderRoute: typeof AuthenticatedContaPedidosRouteImport
+      parentRoute: typeof AuthenticatedContaRoute
+    }
+    '/_authenticated/conta/enderecos': {
+      id: '/_authenticated/conta/enderecos'
+      path: '/enderecos'
+      fullPath: '/conta/enderecos'
+      preLoaderRoute: typeof AuthenticatedContaEnderecosRouteImport
+      parentRoute: typeof AuthenticatedContaRoute
+    }
   }
 }
 
+interface AuthenticatedContaRouteChildren {
+  AuthenticatedContaEnderecosRoute: typeof AuthenticatedContaEnderecosRoute
+  AuthenticatedContaPedidosRoute: typeof AuthenticatedContaPedidosRoute
+  AuthenticatedContaIndexRoute: typeof AuthenticatedContaIndexRoute
+}
+
+const AuthenticatedContaRouteChildren: AuthenticatedContaRouteChildren = {
+  AuthenticatedContaEnderecosRoute: AuthenticatedContaEnderecosRoute,
+  AuthenticatedContaPedidosRoute: AuthenticatedContaPedidosRoute,
+  AuthenticatedContaIndexRoute: AuthenticatedContaIndexRoute,
+}
+
+const AuthenticatedContaRouteWithChildren =
+  AuthenticatedContaRoute._addFileChildren(AuthenticatedContaRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedContaRoute: typeof AuthenticatedContaRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedContaRoute: AuthenticatedContaRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   CheckoutRoute: CheckoutRoute,
