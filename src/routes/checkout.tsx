@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { useAuth } from "@/hooks/use-auth";
@@ -67,16 +67,9 @@ function Checkout() {
     return (
       <SiteLayout>
         <div className="max-w-md mx-auto px-4 py-16 text-center">
-          <CheckCircle2 className="h-16 w-16 mx-auto text-success" />
-          <h1 className="text-2xl font-bold mt-4">Pedido recebido!</h1>
-          <p className="text-muted-foreground mt-2">Número do pedido: <strong>{orderNumber}</strong></p>
-          <p className="text-sm text-muted-foreground mt-3">
-            Em breve integraremos o Mercado Pago. Por enquanto, seu pedido está registrado como pendente — entraremos em contato para confirmar pagamento e envio.
-          </p>
-          <div className="mt-6 flex gap-3 justify-center">
-            <Link to="/conta/pedidos" className="h-11 px-6 inline-flex items-center bg-primary text-primary-foreground rounded-full font-semibold">Ver meus pedidos</Link>
-            <Link to="/" className="h-11 px-6 inline-flex items-center border border-border rounded-full font-semibold">Início</Link>
-          </div>
+          <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
+          <h1 className="text-2xl font-bold mt-4">Redirecionando para o pagamento…</h1>
+          <p className="text-muted-foreground mt-2">Pedido <strong>{orderNumber}</strong> criado. Você será levado ao checkout seguro da InfinityPay.</p>
         </div>
       </SiteLayout>
     );
@@ -92,6 +85,7 @@ function Checkout() {
           status: "pending",
           payment_method: method,
           payment_status: "pending",
+          payment_provider: "infinitepay",
           subtotal,
           shipping_cost: shipping,
           discount: method === "pix" ? subtotal * 0.1 : 0,
@@ -115,14 +109,34 @@ function Checkout() {
       );
       if (itemsErr) throw itemsErr;
 
+      // Monta itens para InfinityPay (preços em centavos)
+      const ipItems = items.map((i) => ({
+        name: i.title.slice(0, 60),
+        price: Math.round(i.price * i.quantity * 100),
+        quantity: 1,
+      }));
+      if (shipping > 0) ipItems.push({ name: "Frete", price: Math.round(shipping * 100), quantity: 1 });
+      if (method === "pix" && subtotal * 0.1 > 0) {
+        ipItems.push({ name: "Desconto Pix (10%)", price: -Math.round(subtotal * 0.1 * 100), quantity: 1 });
+      }
+
+      const redirectUrl = `${window.location.origin}/pedido-confirmado?order_id=${order.id}`;
+      const url =
+        `https://checkout.infinitepay.io/fluxogestao` +
+        `?items=${encodeURIComponent(JSON.stringify(ipItems))}` +
+        `&order_nsu=${encodeURIComponent(order.id)}` +
+        `&redirect_url=${encodeURIComponent(redirectUrl)}`;
+
       clearCart();
       setOrderNumber(order.order_number);
+      window.location.href = url;
     } catch (err) {
       alert("Erro ao registrar pedido: " + (err instanceof Error ? err.message : "tente novamente"));
     } finally {
       setPlacing(false);
     }
   }
+
 
   return (
     <SiteLayout>
@@ -152,10 +166,11 @@ function Checkout() {
                 <PayOption label="Cartão de crédito" desc="em até 12x sem juros" selected={method === "credit_card"} onClick={() => setMethod("credit_card")} />
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                💳 Em breve: integração completa com Mercado Pago. Por enquanto, o pedido fica registrado e nossa equipe entra em contato para confirmação.
+                🔒 Pagamento processado com segurança pela <strong>InfinityPay</strong>. Pix com aprovação imediata e cartão em até 12x.
               </p>
             </section>
           </div>
+
 
           <aside className="bg-card border border-border rounded-2xl p-6 h-fit lg:sticky lg:top-24">
             <h2 className="font-bold mb-4">Resumo</h2>
