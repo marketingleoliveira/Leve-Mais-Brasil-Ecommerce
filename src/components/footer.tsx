@@ -41,8 +41,13 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="border-t border-primary-foreground/10 py-6 text-center text-xs text-primary-foreground/70">
-        © {new Date().getFullYear()} Leve Mais Brasil · CNPJ em breve · Todos os direitos reservados
+      <div className="border-t border-primary-foreground/10 py-6 text-center text-xs text-primary-foreground/70 space-y-2">
+        <div>© {new Date().getFullYear()} Leve Mais Brasil · CNPJ em breve · Todos os direitos reservados</div>
+        <div>
+          <Link to="/admin" className="text-primary-foreground/50 hover:text-accent underline-offset-2 hover:underline">
+            Acesso de equipe
+          </Link>
+        </div>
       </div>
     </footer>
   );
