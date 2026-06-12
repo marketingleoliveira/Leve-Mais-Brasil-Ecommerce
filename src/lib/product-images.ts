@@ -17,6 +17,11 @@ const map: Record<string, string> = {
   "suporte-magnetico-carro": carmount,
   "pistola-massagem-muscular": massagegun,
   "comedouro-automatico-pet": petfeeder,
+  // Novos produtos — usam imagens próximas como placeholder até subir fotos reais
+  "escova-alisadora-3-em-1": ringlight,
+  "depilador-laser-recarregavel": massagegun,
+  "organizador-gavetas-kit-6": blender,
+  "luminaria-projetor-galaxia": ringlight,
 };
 
 export function productImage(slug: string, fallback?: string): string {

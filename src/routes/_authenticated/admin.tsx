@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingBag, Users, Truck, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, Users, Truck, ArrowLeft, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -30,6 +30,7 @@ function AdminLayout() {
           <AdminLink to="/admin/pedidos" icon={ShoppingBag} label="Pedidos" />
           <AdminLink to="/admin/clientes" icon={Users} label="Clientes" />
           <AdminLink to="/admin/fornecedores" icon={Truck} label="Fornecedores" />
+          <AdminLink to="/admin/tutorial" icon={BookOpen} label="Tutorial Dropship" />
         </nav>
       </aside>
       <main className="p-6 lg:p-8"><Outlet /></main>
