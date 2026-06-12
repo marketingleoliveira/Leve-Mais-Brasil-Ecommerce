@@ -124,7 +124,7 @@ function Checkout() {
       const url =
         `https://checkout.infinitepay.io/fluxogestao` +
         `?items=${encodeURIComponent(JSON.stringify(ipItems))}` +
-        `&order_nsu=${encodeURIComponent(order.id)}` +
+        `&order_nsu=${encodeURIComponent(nsu)}` +
         `&redirect_url=${encodeURIComponent(redirectUrl)}`;
 
       clearCart();
