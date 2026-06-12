@@ -109,17 +109,17 @@ function Checkout() {
       );
       if (itemsErr) throw itemsErr;
 
-      // Monta itens para InfinityPay (preços em centavos)
+      // InfinityPay não aceita itens com preço negativo nem order_nsu com hífen.
+      // Aplicamos o desconto Pix diretamente no preço de cada item.
+      const discountRate = method === "pix" ? 0.1 : 0;
       const ipItems = items.map((i) => ({
         name: i.title.slice(0, 60),
-        price: Math.round(i.price * i.quantity * 100),
+        price: Math.round(i.price * i.quantity * (1 - discountRate) * 100),
         quantity: 1,
       }));
       if (shipping > 0) ipItems.push({ name: "Frete", price: Math.round(shipping * 100), quantity: 1 });
-      if (method === "pix" && subtotal * 0.1 > 0) {
-        ipItems.push({ name: "Desconto Pix (10%)", price: -Math.round(subtotal * 0.1 * 100), quantity: 1 });
-      }
 
+      const nsu = order.id.replace(/-/g, "").slice(0, 32);
       const redirectUrl = `${window.location.origin}/pedido-confirmado?order_id=${order.id}`;
       const url =
         `https://checkout.infinitepay.io/fluxogestao` +
