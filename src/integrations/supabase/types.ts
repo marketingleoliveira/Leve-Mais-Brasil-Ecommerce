@@ -233,6 +233,7 @@ export type Database = {
           short_description: string | null
           sku: string | null
           slug: string
+          source_url: string | null
           stock: number | null
           supplier_id: string | null
           supplier_url: string | null
@@ -257,6 +258,7 @@ export type Database = {
           short_description?: string | null
           sku?: string | null
           slug: string
+          source_url?: string | null
           stock?: number | null
           supplier_id?: string | null
           supplier_url?: string | null
@@ -281,6 +283,7 @@ export type Database = {
           short_description?: string | null
           sku?: string | null
           slug?: string
+          source_url?: string | null
           stock?: number | null
           supplier_id?: string | null
           supplier_url?: string | null
