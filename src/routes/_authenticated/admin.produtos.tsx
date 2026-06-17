@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, X, Loader2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Plus, Edit, Trash2, X, Loader2, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBRL } from "@/lib/format";
+import { scrapeProduct } from "@/lib/scrape-product.functions";
 
 type Product = {
   id: string;
@@ -15,7 +17,22 @@ type Product = {
   is_featured: boolean;
   category_id: string | null;
   supplier_id: string | null;
+  description?: string | null;
+  short_description?: string | null;
+  images?: string[] | null;
+  source_url?: string | null;
 };
+
+function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+}
 
 export const Route = createFileRoute("/_authenticated/admin/produtos")({
   component: AdminProdutos,
@@ -27,6 +44,9 @@ function AdminProdutos() {
   const [suppliers, setSuppliers] = useState<Array<{ id: string; name: string }>>([]);
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [importUrl, setImportUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const scrape = useServerFn(scrapeProduct);
 
   async function load() {
     const [{ data: p }, { data: c }, { data: s }] = await Promise.all([
@@ -41,6 +61,29 @@ function AdminProdutos() {
   }
   useEffect(() => { load(); }, []);
 
+  async function handleImport() {
+    if (!importUrl.trim()) return;
+    setImporting(true);
+    try {
+      const result = await scrape({ data: { url: importUrl.trim() } });
+      setEditing((prev) => ({
+        ...(prev ?? { is_active: true }),
+        title: result.title || prev?.title || "",
+        slug: prev?.slug || slugify(result.title || ""),
+        description: result.description || prev?.description || "",
+        short_description: result.short_description || prev?.short_description || "",
+        price: result.price ?? prev?.price,
+        images: result.images.length ? result.images : prev?.images ?? [],
+        source_url: result.source_url,
+      }));
+      setImportUrl("");
+    } catch (e) {
+      alert("Falha ao importar: " + (e instanceof Error ? e.message : String(e)));
+    } finally {
+      setImporting(false);
+    }
+  }
+
   async function save() {
     if (!editing?.title || !editing?.slug || editing.price == null) {
       alert("Preencha título, slug e preço");
@@ -50,12 +93,16 @@ function AdminProdutos() {
       slug: editing.slug,
       title: editing.title,
       price: Number(editing.price),
-      cost: editing.cost != null ? Number(editing.cost) : null,
-      stock: editing.stock != null ? Number(editing.stock) : null,
+      cost: editing.cost != null && editing.cost !== ("" as never) ? Number(editing.cost) : null,
+      stock: editing.stock != null && editing.stock !== ("" as never) ? Number(editing.stock) : null,
       is_active: editing.is_active ?? true,
       is_featured: editing.is_featured ?? false,
       category_id: editing.category_id || null,
       supplier_id: editing.supplier_id || null,
+      description: editing.description || null,
+      short_description: editing.short_description || null,
+      images: editing.images && editing.images.length ? editing.images : [],
+      source_url: editing.source_url || null,
     };
     const { error } = editing.id
       ? await supabase.from("products").update(payload).eq("id", editing.id)
@@ -81,7 +128,7 @@ function AdminProdutos() {
           <h1 className="text-2xl font-bold">Produtos</h1>
           <p className="text-muted-foreground text-sm">{products.length} cadastrados</p>
         </div>
-        <button onClick={() => setEditing({ is_active: true })} className="h-10 px-5 bg-primary text-primary-foreground rounded-full font-semibold inline-flex items-center gap-2">
+        <button onClick={() => setEditing({ is_active: true, images: [] })} className="h-10 px-5 bg-primary text-primary-foreground rounded-full font-semibold inline-flex items-center gap-2">
           <Plus className="h-4 w-4" /> Novo produto
         </button>
       </div>
@@ -131,9 +178,51 @@ function AdminProdutos() {
               <h2 className="text-xl font-bold">{editing.id ? "Editar produto" : "Novo produto"}</h2>
               <button onClick={() => setEditing(null)}><X className="h-5 w-5" /></button>
             </div>
+
+            <div className="mb-4 p-3 bg-secondary/50 rounded-xl">
+              <label className="text-xs font-semibold text-muted-foreground block mb-2">
+                Importar de URL (Shopee, AliExpress, Mercado Livre, Amazon...)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  placeholder="https://shopee.com.br/..."
+                  value={importUrl}
+                  onChange={(e) => setImportUrl(e.target.value)}
+                  className="flex-1 h-10 px-3 rounded-lg border border-input bg-card text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={handleImport}
+                  disabled={importing || !importUrl.trim()}
+                  className="h-10 px-4 bg-primary text-primary-foreground rounded-lg font-semibold inline-flex items-center gap-2 disabled:opacity-50"
+                >
+                  {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  Importar
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Preenche título, descrição, preço e imagens automaticamente.</p>
+            </div>
+
             <div className="grid sm:grid-cols-2 gap-3">
-              <F label="Título" value={editing.title ?? ""} onChange={(v) => setEditing({ ...editing, title: v })} className="sm:col-span-2" />
+              <F label="Título" value={editing.title ?? ""} onChange={(v) => setEditing({ ...editing, title: v, slug: editing.slug || slugify(v) })} className="sm:col-span-2" />
               <F label="Slug (URL)" value={editing.slug ?? ""} onChange={(v) => setEditing({ ...editing, slug: v })} className="sm:col-span-2" />
+              <FArea label="Descrição curta" value={editing.short_description ?? ""} onChange={(v) => setEditing({ ...editing, short_description: v })} className="sm:col-span-2" rows={2} />
+              <FArea label="Descrição completa" value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} className="sm:col-span-2" rows={4} />
+              <FArea
+                label="Imagens (uma URL por linha)"
+                value={(editing.images ?? []).join("\n")}
+                onChange={(v) => setEditing({ ...editing, images: v.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                className="sm:col-span-2"
+                rows={3}
+              />
+              {editing.images && editing.images.length > 0 && (
+                <div className="sm:col-span-2 flex gap-2 overflow-x-auto">
+                  {editing.images.map((url, i) => (
+                    <img key={i} src={url} alt={`Preview ${i + 1}`} className="h-20 w-20 object-cover rounded-lg border border-border flex-shrink-0" onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.3")} />
+                  ))}
+                </div>
+              )}
               <F label="Preço de venda (R$)" type="number" value={String(editing.price ?? "")} onChange={(v) => setEditing({ ...editing, price: v as never })} />
               <F label="Custo do fornecedor (R$)" type="number" value={String(editing.cost ?? "")} onChange={(v) => setEditing({ ...editing, cost: v as never })} />
               <F label="Estoque (opcional)" type="number" value={String(editing.stock ?? "")} onChange={(v) => setEditing({ ...editing, stock: v as never })} />
@@ -176,6 +265,15 @@ function F({ label, value, onChange, type = "text", className = "" }: { label: s
     <label className={`block ${className}`}>
       <span className="text-xs font-semibold text-muted-foreground">{label}</span>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full h-10 px-3 rounded-lg border border-input bg-card focus:outline-none focus:ring-2 focus:ring-ring text-sm" />
+    </label>
+  );
+}
+
+function FArea({ label, value, onChange, className = "", rows = 3 }: { label: string; value: string; onChange: (v: string) => void; className?: string; rows?: number }) {
+  return (
+    <label className={`block ${className}`}>
+      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+      <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows} className="mt-1 w-full px-3 py-2 rounded-lg border border-input bg-card focus:outline-none focus:ring-2 focus:ring-ring text-sm font-mono" />
     </label>
   );
 }

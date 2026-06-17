@@ -25,5 +25,8 @@ const map: Record<string, string> = {
 };
 
 export function productImage(slug: string, fallback?: string): string {
+  // Prefer a real stored image (e.g. scraped from supplier URL). Only fall back
+  // to the local placeholder map when no image was uploaded for the product.
+  if (fallback && /^https?:\/\//i.test(fallback)) return fallback;
   return map[slug] ?? fallback ?? earbuds;
 }
