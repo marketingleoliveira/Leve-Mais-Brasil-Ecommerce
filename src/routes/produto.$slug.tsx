@@ -84,12 +84,28 @@ function PDPInner() {
       </nav>
 
       <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="bg-card rounded-3xl overflow-hidden shadow-card aspect-square relative">
-          <img src={img} alt={p.title} width={800} height={800} className="w-full h-full object-cover" />
-          {disc && (
-            <span className="absolute top-4 left-4 badge-promo px-3 py-1.5 rounded-full text-sm">
-              -{disc}% OFF
-            </span>
+        <div>
+          <div className="bg-card rounded-3xl overflow-hidden shadow-card aspect-square relative">
+            <img src={img} alt={p.title} width={800} height={800} className="w-full h-full object-cover" />
+            {disc && (
+              <span className="absolute top-4 left-4 badge-promo px-3 py-1.5 rounded-full text-sm">
+                -{disc}% OFF
+              </span>
+            )}
+          </div>
+          {gallery.length > 1 && (
+            <div className="mt-3 grid grid-cols-5 gap-2">
+              {gallery.map((src, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImg(i)}
+                  className={`aspect-square rounded-xl overflow-hidden border-2 transition ${i === activeImg ? "border-primary" : "border-transparent hover:border-border"}`}
+                  aria-label={`Imagem ${i + 1}`}
+                >
+                  <img src={productImage(p.slug, src)} alt={`${p.title} ${i + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
