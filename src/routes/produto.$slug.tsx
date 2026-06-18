@@ -63,7 +63,9 @@ function PDPInner() {
   const price = Number(p.price);
   const compare = p.compare_at_price ? Number(p.compare_at_price) : null;
   const disc = discountPercent(price, compare);
-  const img = productImage(p.slug, p.images?.[0]);
+  const gallery: string[] = (p.images && p.images.length > 0) ? p.images : [productImage(p.slug, undefined)];
+  const [activeImg, setActiveImg] = useState(0);
+  const img = productImage(p.slug, gallery[activeImg]);
   const pixPrice = price * 0.9;
 
   function handleAdd() {
