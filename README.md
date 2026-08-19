@@ -1,26 +1,44 @@
 # Leve Mais Brasil Marketplace
 
-quero criar um site para vender sem estoque, estilo dropship, o nome do site será levemaisbrasil ja tenho a logo, vou anexar, crie um sistema completo, que um site de venda de dropship precise, com painel de controle e tudo. O site deve ter temática brasileira, verde e amarela, e focar em vender no proprio site, com expansao futura para shopee e tiktokshop.
+Plataforma completa de e-commerce e marketplace focada no modelo de **dropshipping**, com identidade visual verde e amarela, painel administrativo integrado e suporte a múltiplos canais de venda.
 
-This project was built with [Lovable](https://lovable.dev).
+🔗 **Live App:** [levemaisbrasil.lovable.app](https://levemaisbrasil.lovable.app)  
+🌐 **Portfólio do Desenvolvedor:** [portfolioleoliveira.lovable.app](https://portfolioleoliveira.lovable.app)
 
-**Live app**: https://levemaisbrasil.lovable.app
+---
 
-## Build with Lovable
+## 📌 Sobre o Projeto
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a829c3d1-f92b-4903-ad17-5761d9469b5c).
+O **Leve Mais Brasil Marketplace** foi desenvolvido para operar vendas sem estoque (dropshipping) com alto desempenho. O sistema conta com vitrine completa para venda direta no próprio site e infraestrutura preparada para integração e expansão de catálogo em marketplaces como **Shopee** e **TikTok Shop**.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+---
 
-## Development
+## ⚡ Principais Funcionalidades
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+* **Painel de Controle Administrativo:** Gestão de pedidos, catálogo de produtos e métricas de vendas.
+* **Módulo Dropshipping:** Estrutura otimizada para fluxo de pedidos sem estoque e sincronização de produtos.
+* **Design Temático Brasil:** Interface responsiva moderna com identidade visual verde e amarela.
+* **Arquitetura Multi-canal:** Base pronta para integração via API com grandes marketplaces.
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Frontend:** TypeScript, React, Vite, Tailwind CSS
+* **Backend & Banco de Dados:** Supabase (PL/pgSQL)
+* **Framework Web:** TanStack Start / Router
+* **Gerenciador de Pacotes:** Bun / npm
+* **Desenvolvimento Acelerado:** Lovable
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+Certifique-se de ter o **Node.js** e o **npm** (ou **Bun**) instalados em sua máquina.
+
+### Passo a Passo
+
+1. **Clonar o repositório:**
+   ```bash
+   git clone [https://github.com/RennanLucas/Leve-Mais-Brasil-Marketplace.git](https://github.com/RennanLucas/Leve-Mais-Brasil-Marketplace.git)
